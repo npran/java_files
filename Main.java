@@ -1,45 +1,44 @@
 import java.util.Scanner;
 
-class Tabletop {
-    private double width;
-    private double height;
+class Project {
+    String name;
+    int completionTime;
 
     // Parameterized constructor
-    public Tabletop(double width, double height) {
-        this.width = width;
-        this.height = height;
+    Project(String name, int completionTime) {
+        this.name = name;
+        this.completionTime = completionTime;
     }
 
-    // Returns area
-    public double getArea() {
-        return width * height;
-    }
+    // Static method to calculate statistics
+    public static void calculateStatistics(Project[] projects) {
+        int n = projects.length;
+        double sum = 0;
 
-    // Returns perimeter
-    public double getPerimeter() {
-        return 2 * (width + height);
-    }
+        // Calculate sum of completion times
+        for (int i = 0; i < n; i++) {
+            sum += projects[i].completionTime;
+        }
 
-    // Static method to find largest area
-    public static double findLargestTabletopArea(Tabletop[] tabletops) {
-        double max = tabletops[0].getArea();
-        for (Tabletop t : tabletops) {
-            if (t.getArea() > max) {
-                max = t.getArea();
+        // Calculate average
+        double average = sum / n;
+
+        // Find project with maximum deviation
+        double maxDeviation = -1;
+        Project maxProject = projects[0];
+
+        for (int i = 0; i < n; i++) {
+            double deviation = Math.abs(projects[i].completionTime - average);
+            if (deviation > maxDeviation) {
+                maxDeviation = deviation;
+                maxProject = projects[i];
             }
         }
-        return max;
-    }
 
-    // Static method to find smallest area
-    public static double findSmallestTabletopArea(Tabletop[] tabletops) {
-        double min = tabletops[0].getArea();
-        for (Tabletop t : tabletops) {
-            if (t.getArea() < min) {
-                min = t.getArea();
-            }
-        }
-        return min;
+        // Output
+        System.out.printf("%.2f\n", average);
+        System.out.println(maxProject.name);
+        System.out.println(maxProject.completionTime);
     }
 }
 
@@ -48,24 +47,20 @@ public class Main {
         Scanner sc = new Scanner(System.in);
 
         int n = sc.nextInt();
-        Tabletop[] tabletops = new Tabletop[n];
+        sc.nextLine(); // consume newline
+
+        Project[] projects = new Project[n];
 
         for (int i = 0; i < n; i++) {
-            double width = sc.nextDouble();
-            double height = sc.nextDouble();
-            tabletops[i] = new Tabletop(width, height);
+            String name = sc.nextLine();
+            int time = sc.nextInt();
+            sc.nextLine(); // consume newline
+
+            projects[i] = new Project(name, time);
         }
 
-        double largest = Tabletop.findLargestTabletopArea(tabletops);
-        double smallest = Tabletop.findSmallestTabletopArea(tabletops);
-
-        System.out.printf("Largest: %.2f%n", largest);
-        System.out.printf("Smallest: %.2f%n", smallest);
-
-        for (int i = 0; i < n; i++) {
-            System.out.printf("Perimeter %d: %.2f%n", i + 1, tabletops[i].getPerimeter());
-        }
-
+        Project.calculateStatistics(projects);
         sc.close();
     }
 }
+
